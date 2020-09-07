@@ -1,1 +1,5 @@
 
+STATE MACHINE
+
+A state machine is any object that behaves different based on its history and current inputs.  A finite state machine is a mathematical abstraction used to design algorithms. In simpler terms, a state machine will read a series of inputs. When it reads an input, it will switch to a different state. Each state specifies which state to switch to, for a given input. 
+The main challenge in programming reactive (event-driven) systems is to correctly identify the appropriate piece of code to execute in response to a given event. In all but the most trivial reactive systems, the response depends both on the nature of the event and, more importantly, on the history of past events in which the system was involved. From the programming perspective, this dependence on context very often leads to deeply nested if-else or switch-case constructs. Here is where a State Machine design concept comes in handy that helps to eliminate series of if-else and write a concise and a “free-flowing” code construct. 
