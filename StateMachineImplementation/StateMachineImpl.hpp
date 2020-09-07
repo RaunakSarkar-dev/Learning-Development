@@ -44,6 +44,7 @@ public:
 		, actionHandler(actHandle)
 	{
 	}
+	// This is the entry point of the state machine
 	void init()
 	{
 		if (currentState == UNDEFINED)
@@ -52,6 +53,7 @@ public:
 		}
 	}
 
+	// This function defines the transition from one state to another
 	void transition(const int& startState, const int& endState)
 	{
 		if (startState != endState)
@@ -61,6 +63,7 @@ public:
 		}
 	}
 
+	// This is a special overload to handle conditional transition, where endstate is decided based on some condition
 	void transition(const int& startState)
 	{
 		if (startState == WAIT)
@@ -78,6 +81,7 @@ public:
 		}
 	}
 
+	// This is the handling of the case when a transition/operation is successful
 	void success()
 	{
 		if (currentState == INITIAL)
@@ -115,6 +119,7 @@ public:
 		}
 	}
 
+	// This is the handling for the failed transition/operation
 	void failure()
 	{
 		if (currentState == INITIAL)
@@ -147,6 +152,7 @@ public:
 		}
 	}
 
+	// This function facilitates the state machine to enter a particular state
 	void enterState(const int state)
 	{
 		currentState = state;
@@ -165,6 +171,7 @@ public:
 		}
 	}
 
+	// This function defines the behaviour of the machine when it leaves the state
 	void leaveState(const int state)
 	{
 		switch (state)
@@ -180,9 +187,9 @@ public:
 	}
 
 private:
-	IActionHandler& actionHandler;
+	IActionHandler& actionHandler; // This interface contains all the listed action on the state
 
-	int currentState;
+	int currentState; // The variable that maintains the current state
 	int decision;
 };
 
@@ -287,6 +294,6 @@ public:
 	}
 	void spark()
 	{
-		stateMachine.init();
+		stateMachine.init(); // Start the state machine
 	}
 };
