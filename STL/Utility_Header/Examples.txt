@@ -1,0 +1,141 @@
+///////////////////////////////////////////////
+//		STL UTILITY
+///////////////////////////////////////////////
+
+// Header : #include <utility>
+
+1. swap() : Exchanges the values of a and b.
+
+int main()
+{
+    std::string input1 = "Taj";
+    std::string input2 = "Mahal";
+    std::swap(input1,input2);
+    std::cout <<  input1 + input2 << std::endl;
+	return 0;
+}
+
+2. make_pair() : Constructs a pair object with its first element set to x and its second element set to y.
+// The template types can be implicitly deduced from the arguments passed to make_pair.
+// pair objects can be constructed from other pair objects containing different types, if the respective types are implicitly convertible.
+
+int main () {
+  std::pair <int,int> foo;
+  std::pair <int,int> bar;
+  foo = std::make_pair (10,20);
+  bar = std::make_pair (10.5,'A'); //implicit conversion from pair<double,char>
+  std::cout << "foo: " << foo.first << ", " << foo.second << '\n';
+  std::cout << "bar: " << bar.first << ", " << bar.second << '\n';
+  return 0;
+}
+
+3. forward() : Returns an rvalue reference to arg if arg is not an lvalue reference.If arg is an lvalue reference, the function returns arg without modifying its type.
+
+void overloaded(int const& f1) { std::cout <<  "| Lvalue |" << std::endl;}
+void overloaded(int&& f1) { std::cout <<  "| Rvalue |" << std::endl;}
+
+template<class T>
+void fn(T && a)
+{
+    overloaded(a);
+    overloaded(std::forward<T>(a));
+}
+
+int main()
+{
+    int x;
+    fn(x);
+    fn(0); // rvalue passed, hence in second overload,|rvalue| gets printed
+    return 0;
+}
+
+4. move() :  Returns an rvalue reference to arg.
+
+int main()
+{
+    int x = 10;
+    int y = 20;
+    std::vector<int> new1;
+    new1.push_back(x); //copy
+    new1.push_back(std::move(y)); //move the ownership of the resource
+    for(int &x: new1)
+        std::cout<< x << std::endl;
+    return 0;
+}
+
+5. move_if_noexcept() : Returns an rvalue reference to arg, unless copying is a better option than moving to provide at least a strong exception guarantee.
+
+template <class T> void overloaded (T&  x) {std::cout << "[lvalue]\n";}
+template <class T> void overloaded (T&& x) {std::cout << "[rvalue]\n";}
+
+struct A {   // copyable + moveable (noexcept)
+  A() noexcept {}
+  A (const A&) noexcept {}
+  A (A&&) noexcept {}
+};
+
+struct B {   // copyable + moveable (no noexcept)
+  B() {}
+  B (const B&) {}
+  B (B&&) {}
+};
+
+struct C {   // moveable only (no noexcept)
+  C() {}
+  C (C&&) {}
+};
+
+int main () {
+  std::cout << "A: "; overloaded (std::move_if_noexcept(A()));
+  std::cout << "B: "; overloaded (std::move_if_noexcept(B()));
+  std::cout << "C: "; overloaded (std::move_if_noexcept(C()));
+  return 0;
+}
+
+6. declval() : Returns an rvalue reference to type T without referring to any object.This function shall only be used in unevaluated operands (such as the operands of sizeof and decltype).
+
+struct A {              // abstract class
+  virtual int value() = 0;
+};
+
+class B : public A {    // class with specific constructor
+  int val_;
+public:
+  B(int i,int j):val_(i*j){}
+  int value() {return val_;}
+};
+
+int main() {
+  decltype(std::declval<A>().value()) a;  // int a
+  decltype(std::declval<B>().value()) b;  // int b
+  decltype(B(0,0).value()) c;   // same as above (known constructor)
+  a = b = B(10,2).value();
+  std::cout << a << '\n';
+  return 0;
+}
+
+7. piecewise_construct() : This constant value is passed as the first argument to construct a pair object to select the constructor form that constructs 
+// its members in place by forwarding the elements of two tuple objects to their respective constructor.
+
+int main()
+{
+    std::pair <std::vector<std::string>, std::vector<int>> myPair( std::piecewise_construct,
+        std::forward_as_tuple(5, "Run"),
+        std::forward_as_tuple(3,10)
+        );
+    for (std::string& y: myPair.first) std::cout << ' ' << y;
+    std::cout << std::endl;
+    for (int& x: myPair.second) std::cout << ' ' << x;
+    return 0;
+}
+
+8. pair : This class couples together a pair of values, which may be of different types (T1 and T2). The individual values can be accessed through its public members first and second.
+
+int main ()
+{
+  auto mytuple = std::make_tuple (10,'a');
+  std::tuple_element<0,decltype(mytuple)>::type first = std::get<0>(mytuple);
+  std::tuple_element<1,decltype(mytuple)>::type second = std::get<1>(mytuple);
+  std::cout << "mytuple contains: " << first << " and " << second << '\n';
+  return 0;
+}
