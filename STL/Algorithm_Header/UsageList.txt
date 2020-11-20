@@ -1,0 +1,204 @@
+///////////////////////////////////////////////
+//		STL ALGORITHM
+///////////////////////////////////////////////
+
+// Header : #include <algorithm>
+
+// 1. all_of() : Returns true if pred returns true for all the elements in the range [first,last) or if the range is empty, and false otherwise.
+
+int main()
+{
+    std::vector<int> input{2,4,8,22,14,10,208,7046};
+    auto isEven = [](int i){ return !(i%2);};
+    if(std::all_of(input.begin(),input.end(),isEven)) // Check for even numbers
+        std::cout << " All elements are even!" << std::endl;
+    return 0;
+}
+
+// 2. any_of() : Returns true if pred returns true for any of the elements in the range [first,last), and false otherwise
+
+int main()
+{
+    std::vector<int> input{5,4,8,7,33,44,62,90,47,0,56,87,1,99,39};
+    auto isEven = [](int i){ return !(i%2);};
+    if(std::any_of(input.begin(),input.end(),isEven)) // Check for even numbers
+        std::cout << " Atleast one of the numbers are even!" << std::endl;
+    return 0;
+}
+
+// 3. none_of() : Returns true if pred returns false for all the elements in the range [first,last) or if the range is empty, and false otherwise.
+
+int main()
+{
+    std::vector<int> input{2,4,8,22,14,10,208,7046};
+    auto isOdd = [](int i){ return (i%2);};
+    if(std::none_of(input.begin(),input.end(),isOdd)) // Check for odd numbers
+        std::cout << " None of the numbers are odd!" << std::endl;
+    return 0;
+}
+
+// 4. for_each() : Applies function fn to each of the elements in the range [first,last).
+
+int main()
+{
+    std::vector<int> input{2,4,8,22,15,10,208,7046};
+    std::for_each(input.begin(),input.end(),[](int i){ std::cout << " Value+1: " << i+1 << std::endl;}); // Iterate over all elements of input and applies the lambda to each of them
+    return 0;
+}
+
+// 5. find() : Returns an iterator to the first element in the range [first,last) that compares equal to val. If no such element is found, the function returns last.
+
+int main()
+{
+    std::vector<int> input{2,4,8,22,15,10,208,7046};
+    if(std::find(input.begin(),input.end(),10) != input.end()) // Find 10 in the list
+         std::cout << "Found 10 in the list! " << std::endl;
+    return 0;
+}
+
+// 6. find_if() : Returns an iterator to the first element in the range [first,last) for which pred returns true. If no such element is found, the function returns last.
+
+int main()
+{
+    std::vector<int> input{2,4,8,22,15,10,208,7046};
+    auto isOdd = [](int i){ return (i%2);};
+    std::vector<int>::iterator it = std::find_if(input.begin(),input.end(),isOdd); // Returns iterator to first odd value
+    std::cout << "First odd value in the list: " << *it << std::endl;
+    return 0;
+}
+
+// 7. find_if_not() : Returns an iterator to the first element in the range [first,last) for which pred returns false. If no such element is found, the function returns last.
+
+int main()
+{
+    std::vector<int> input{2,4,8,22,15,10,208,7046};
+    std::vector<int> output;
+    auto isEven = [](int i){ return !(i%2);};
+    std::vector<int>::iterator it = std::find_if_not(input.begin(),input.end(),isEven); // Returns iterator to first not Even(odd) value
+    std::cout << "First odd value in the list: " << *it << std::endl;
+    return 0;
+}
+
+// 8. find_if_not() : Searches the range [first1,last1) for the last occurrence of the sequence defined by [first2,last2), and returns an iterator to its first element, or last1 if no occurrences are found.
+// The elements in both ranges are compared sequentially using operator== (or pred, in version (2)): A subsequence of [first1,last1) is considered a match only when this is true for all the elements of [first2,last2).
+// This function returns the last of such occurrences.
+
+int main()
+{
+    std::vector<int> input{2,4,8,22,15,10,208,7046};
+    std::vector<int> searchfor{2,4,8,15,10,208};
+    auto isDifferent = [](int i, int j) { return (i!=j);};
+    std::vector<int>::iterator it = std::find_end(input.begin(),input.end(),searchfor.begin(),searchfor.end()); // Using default implementation
+    std::vector<int>::iterator it1 = std::find_end(input.begin(),input.end(),searchfor.begin(),searchfor.end(),isDifferent); // Using predicate
+    std::cout << "Found in the list,at: : " << it-input.begin() << std::endl;
+    std::cout << "Found in the list,at: : " << it1-input.begin() << std::endl;
+    return 0;
+}
+
+// 9. find_first_of() : Returns an iterator to the first element in the range [first1,last1) that matches any of the elements in [first2,last2). If no such element is found, the function returns last1.
+// The elements in [first1,last1) are sequentially compared to each of the values in [first2,last2) using operator== (or pred, in version (2)), until a pair matches.
+
+int main()
+{
+    std::vector<int> input{2,4,8,22,15,10,208,7046};
+    std::vector<int> searchfor{10,208};
+    std::vector<int>::iterator it = std::find_first_of(input.begin(),input.end(),searchfor.begin(),searchfor.end());
+    std::cout << "Found in the list,at: : " << it-input.begin() << std::endl;
+    return 0;
+}
+
+// 10. adjacent_find() : Searches the range [first,last) for the first occurrence of two consecutive elements that match, and returns an iterator to the first of these two elements, or last if no such pair is found.
+// Two elements match if they compare equal using operator== (or using pred, in version (2)).
+
+int main()
+{
+    std::vector<int> input{2,4,8,22,15,15,10,208,7046};
+    std::vector<int>::iterator it = std::adjacent_find(input.begin(),input.end());
+    std::cout << "Found in the list,at: : " << it-input.begin() << std::endl;
+    return 0;
+}
+
+// 11.count() : Returns the number of elements in the range [first,last) that compare equal to val.The function uses operator== to compare the individual elements to val.
+
+int main()
+{
+    std::vector<int> input{2,4,8,22,15,15,10,208,7046};
+    auto isDifferent = [](int i, int j) { return (i!=j);};
+    int count = std::count(input.begin(),input.end(),15);
+    std::cout << "Count: " << count << std::endl;
+    return 0;
+}
+
+// 12.count_if() : Returns the number of elements in the range [first,last) for which pred is true.
+
+int main()
+{
+    std::vector<int> input{2,4,8,22,15,15,10,208,7046};
+    auto isEven = [](int i){ return !(i%2);};
+    int count = std::count_if(input.begin(),input.end(),isEven);
+    std::cout << "Count: " << count << std::endl;
+    return 0;
+}
+
+// 13.mismatch() : Compares the elements in the range [first1,last1) with those in the range beginning at first2, and returns the first element of both sequences that does not match.
+// The elements are compared using operator== (or pred, in version (2)).
+
+int main()
+{
+    std::vector<int> input{2,4,8,22,24,15,10,208,7046};
+    std::vector<int> searchfor{2,4,8,24,17};
+    std::pair<std::vector<int>::iterator,std::vector<int>::iterator> count = std::mismatch(input.begin(),input.end(),searchfor.begin());
+    std::cout << "First: " << *count.first << " End: " << *count.second << std::endl;
+    return 0;
+}
+
+// 14.equal() : Compares the elements in the range [first1,last1) with those in the range beginning at first2, and returns true if all of the elements in both ranges match.
+// The elements are compared using operator== (or pred, in version (2)).
+
+int main()
+{
+    std::vector<int> input{2,4,8,22,24,15,10,208,7046};
+    std::vector<int> searchfor{2,4,8,22,24,15,10,208,7046};
+    if(std::equal(input.begin(),input.end(),searchfor.begin()))
+       std::cout << "Equal "<< std::endl;
+    return 0;
+}
+
+// 15.is_permutation() : Compares the elements in the range [first1,last1) with those in the range beginning at first2, and returns true if all of the elements in both ranges match, even in a different order.
+// The elements are compared using operator== (or pred, in version (2)).
+
+int main()
+{
+    std::vector<char> word1 { 'l','i','s','t','e','n'};
+    std::vector<char> word2 { 's','i','l','e','n','t'};
+    if(std::is_permutation(word1.begin(),word1.end(),word2.begin()))
+           std::cout << "Anagram "<< std::endl;
+    return 0;
+}
+
+// 16.search() : Searches the range [first1,last1) for the first occurrence of the sequence defined by [first2,last2), and returns an iterator to its first element, or last1 if no occurrences are found.
+// The elements in both ranges are compared sequentially using operator== (or pred, in version (2)): A subsequence of [first1,last1) is considered a match only when this is true for all the elements of [first2,last2).
+// This function returns the first of such occurrences.
+
+int main()
+{
+    std::vector<int> input{2,4,8,22,24,15,10,208,7046};
+    std::vector<int> searchfor{24,15,10};
+    std::vector<int> searchalsofor{1,2,39};
+    std::vector<int>::iterator it1 = std::search(input.begin(),input.end(),searchfor.begin(),searchfor.end());
+    std::vector<int>::iterator it2 = std::search(input.begin(),input.end(),searchalsofor.begin(),searchalsofor.end());
+    std::cout << "Found in the list,at: : " << *it1<< std::endl;
+    std::cout << "Found in the list,at: : " << *it2<< std::endl;
+    return 0;
+}
+
+// 17.search_n() : Searches the range [first,last) for a sequence of count elements, each comparing equal to val (or for which pred returns true).
+// The function returns an iterator to the first of such elements, or last if no such sequence is found.
+
+int main()
+{
+   std::vector<int> input{2,4,8,22,22,15,15,15,15};
+   std::vector<int>::iterator it1  = std::search_n(input.begin(),input.end(),2,15);
+   std::cout << "Found in the list,at: " << it1-input.begin()<< std::endl;
+   return 0;
+}
