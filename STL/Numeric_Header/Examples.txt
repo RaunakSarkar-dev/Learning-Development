@@ -1,0 +1,125 @@
+///////////////////////////////////////////////
+//		STL Numeric
+///////////////////////////////////////////////
+
+// Header : #include <numeric>
+
+1. accumulate() : Returns the result of accumulating all the values in the range [first,last) to init.The default operation is to add the elements up, but a different operation can be specified as binary_op.
+
+struct Custom{
+    int operator() (int x, int y)
+    {
+        return x + (y-1);
+    }
+}cust;
+int main()
+{
+    std::vector<int> nums { 2,7,14,20};
+    int sum = std::accumulate(nums.begin(),nums.end(),0); // Default operator
+    int diff = std::accumulate(nums.begin(),nums.end(),100,std::minus<int>()); // Binary operator
+    int custom = std::accumulate(nums.begin(),nums.end(),0,cust); // Custom operator
+    cout<<"Sum: " << sum << std::endl;
+    cout<<"Diff: " << diff << std::endl;
+    cout<<"Custom: " << custom << std::endl;
+    return 0;
+}
+2. adjacent_difference() : Assigns to every element in the range starting at result the difference between its corresponding element in the range [first,last) 
+// and the one preceding it (except for *result, which is assigned *first).
+
+struct Custom{
+    int operator() (int x, int y)
+    {
+        return x + (y-1);
+    }
+}cust;
+
+void print(std::vector<int> const& result)
+{
+    for(int const& r: result)
+    std::cout << r << " ";
+    std::cout << std::endl;
+}
+int main()
+{
+    std::vector<int> nums { 2,7,14,20};
+    std::vector<int> result;
+    std::adjacent_difference(nums.begin(),nums.end(),std::back_inserter(result)); // Default operator
+    print(result);
+    result.clear();
+    std::adjacent_difference(nums.begin(),nums.end(),std::back_inserter(result),std::multiplies<int>()); // Binary operator
+    print(result);
+    result.clear();
+    std::adjacent_difference(nums.begin(),nums.end(),std::back_inserter(result),cust); // Custom operator
+    print(result);
+    return 0;
+}
+
+3. inner_product() : Returns the result of accumulating init with the inner products of the pairs formed by the elements of two ranges starting at first1 and first2.
+// The two default operations (to add up the result of multiplying the pairs) may be overridden by the arguments binary_op1 and binary_op2.
+
+struct Custom{
+    int operator() (int x, int y)
+    {
+        return x + (y-1);
+    }
+}cust;
+
+int main()
+{
+    std::vector<int> nums { 10,20,30};
+    std::vector<int> nums2{ 1,2,3};
+    int def = std::inner_product(nums.begin(), nums.end(),nums2.begin(), 100); // Default
+    // 1. Multiplies each index[0] of nums with nums2 and so on till end;
+    // 2. Substracts the result from the value provided(100)
+    int binary = std::inner_product(nums.begin(), nums.end(),nums2.begin(), 100, std::minus<int>(), std::multiplies<int>()); 
+    int custom = std::inner_product(nums.begin(), nums.end(),nums2.begin(), 100, std::minus<int>(), cust); // custom    
+    std::cout << " Default " << def << std::endl;
+    std::cout << " Binary " << binary << std::endl;
+    std::cout << " Custom " << custom << std::endl;
+    return 0;
+}
+4. partial_sum() : Assigns to every element in the range starting at result the partial sum of the corresponding elements in the range [first,last).
+
+struct Custom{
+    int operator() (int x, int y)
+    {
+        return x + (y-1);
+    }
+}cust;
+
+void print(std::vector<int> const& result)
+{
+    for(int const& r: result)
+    std::cout << r << " ";
+    std::cout << std::endl;
+}
+int main()
+{
+    std::vector<int> nums { 2,7,14,20};
+    std::vector<int> result;
+    std::partial_sum(nums.begin(),nums.end(),std::back_inserter(result)); // Default operator
+    print(result);
+    result.clear();
+    std::partial_sum(nums.begin(),nums.end(),std::back_inserter(result),std::multiplies<int>()); // Binary operator
+    print(result);
+    result.clear();
+    std::partial_sum(nums.begin(),nums.end(),std::back_inserter(result),cust); // Custom operator
+    print(result);
+    return 0;
+}
+
+5. iota() : Assigns to every element in the range [first,last) successive values of val, as if incremented with ++val after each element is written.
+
+void print(int const* result)
+{
+    for(int i = 0;i<10;i++)
+    std::cout << result[i] << " ";
+    std::cout << std::endl;
+}
+int main()
+{
+    int nums[10];
+    std::iota(nums,nums+10,0);
+    print(nums);
+    return 0;
+}
