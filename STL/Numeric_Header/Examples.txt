@@ -51,7 +51,13 @@ int main()
     result.clear();
     std::adjacent_difference(nums.begin(),nums.end(),std::back_inserter(result),cust); // Custom operator
     print(result);
-    return 0;
+    
+   // Fibonacci
+   std::vector<int> fib(10,1);
+   std::adjacent_difference(cbegin(fib),cend(fib)-1,begin(fib)+1,std::plus{});
+   for(auto &x:fib)
+    std::cout << x << " ";
+   return 0;
 }
 
 3. inner_product() : Returns the result of accumulating init with the inner products of the pairs formed by the elements of two ranges starting at first1 and first2.
@@ -76,6 +82,12 @@ int main()
     std::cout << " Default " << def << std::endl;
     std::cout << " Binary " << binary << std::endl;
     std::cout << " Custom " << custom << std::endl;
+    
+    // Root Mean Square
+    std::vector<int> fib(10)
+    std::iota(begin(fib),end(fib),1);
+    double x = sqrt((std::inner_product(cbegin(fib),cend(fib),begin(fib),0))/10);
+    std::cout << x << std::endl;
     return 0;
 }
 4. partial_sum() : Assigns to every element in the range starting at result the partial sum of the corresponding elements in the range [first,last).
@@ -105,6 +117,13 @@ int main()
     result.clear();
     std::partial_sum(nums.begin(),nums.end(),std::back_inserter(result),cust); // Custom operator
     print(result);
+    
+    // Factorial
+    std::vector<int> fib(10;
+    std::iota(begin(fib),end(fib),1);
+    std::partial_sum(cbegin(fib),cend(fib),begin(fib),std::multiplies<int>());
+    for(auto &x:fib)
+        std::cout << x << " ";
     return 0;
 }
 
