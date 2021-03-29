@@ -1,0 +1,29 @@
+Theory: A subset of some numbers from 1-N can be represented as a binary number of length N 
+
+Problem: Given a set of N numbers,if a subset of numbers sums to a number S, print Yes else No
+
+Solution:
+
+int main()
+{
+    std::vector<int> N{2,4,7,10,15,20,25};
+    int n = 7;
+    for(int mask = 0; mask < (1 << n);mask++)
+    {
+        long subset = 0;
+        for(int i = 0; i < n; i++)
+        {
+           if(mask & (1 << i ))
+           {
+               subset+=N[i];
+           }
+        }
+        if(subset == 60)
+        {
+            std::cout << "Yes" << std::endl;
+            return 0;
+        }
+    }
+    std::cout << "No" << std::endl;
+    return 0;
+}
