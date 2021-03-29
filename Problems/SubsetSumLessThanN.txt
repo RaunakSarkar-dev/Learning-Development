@@ -7,7 +7,7 @@ Solution:
 int main()
 {
     std::vector<int> N{2,4,7,10,15,20,25};
-    int n = 7;
+    int n = N.size();
     for(int mask = 0; mask < (1 << n);mask++)
     {
         long subset = 0;
