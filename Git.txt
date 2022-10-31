@@ -1,0 +1,170 @@
+GIT:
+
+With Git, every time you commit, or save the state of your project, Git basically takes a picture of what all your files look like at that moment and stores a reference to that snapshot.  To be efficient, if files have not changed, Git doesn’t store the file again, just a link to the previous identical file it has already stored. Git thinks about its data more like a stream of snapshots.Git is a simple key-value data store
+
+INTERNALS:
+
+ >> run git init in a new or existing directory, Git creates the .git directory
+$ ls -F1
+config : project-specific configuration options
+description : only by the GitWeb program
+HEAD : points to the branch you currently have checked out
+hooks/ : your client- or server-side hook scripts
+info/ : keeps a global exclude file for ignored patterns that you don’t want to track in a .gitignore file.
+objects/ :stores all the content for your database
+refs/ : stores pointers into commit objects in that data
+index : where Git stores your staging area information
+
+
+git hash-object : create a new data object and manually store it in your new Git database
+git hash-object -w --stdin : In its simplest form, git hash-object would take the content you handed to it and merely return the unique key that would be used to store it in your Git database. The -w option then tells the command to not simply return the key, but to write that object to the database. Finally, the --stdin option tells git hash-object to get the content to be processed from stdin; otherwise, the command would expect a filename argument at the end of the command containing the content to be used.
+find .git/objects -type f : examine your objects directory, you can see that it now contains a file for that new content.
+git cat-file -p d670460b4b4aece5915caf5c68d12f560a9fe3e4(SHA-1) :  content in your object database, you can examine that content, Passing -p to cat-file instructs the command to first figure out the type of content, then display it appropriately.
+git cat-file -t :  object type of any object in Git(blob)
+git cat-file -p master^{tree} : specifies the tree object that is pointed to by the last commit on your master branch.
+git update-index --add --cacheinfo 100644 83baae61804e65cc73a7201a7252750c76066a30 test.txt :   add the earlier version of the test.txt file to a new staging area. You must pass it the --add option because the file doesn’t yet exist in your staging area (you don’t even have a staging area set up yet) and --cacheinfo because the file you’re adding isn’t in your directory but is in your database. Then, you specify the mode, SHA-1, and filename.In this case, you’re specifying a mode of 100644, which means it’s a normal file. Other options are 100755, which means it’s an executable file; and 120000, which specifies a symbolic link. 
+git write-tree : write the staging area out to a tree object
+git read-tree : read trees into your staging area
+git read-tree --prefix=bak <SHA_tree> : ead an existing tree into your staging area as a subtree
+git commit-tree <SHA_tree> : get a different hash value because of different creation time and author data
+git commit-tree <SHA_file> -p <prev_commit_has>  :
+git log --stat <commit_has> : Statistics of that commit
+
+You’ve just done the low-level operations to build up a Git history without using any of the front end commands. This is essentially what Git does when you run the git add and git commit commands?—?it stores blobs for the files that have changed, updates the index, writes out trees, and writes commit objects that reference the top-level trees and the commits that came immediately before them. Thes
+
+git update-ref refs/heads/master<branch_name> <commit_hash> : Updates the mentioned ref to the given commit_hash
+git update-ref refs/heads/test<branch_name> <commit_hash>  : Creates a new branch from the commit mentioned
+git symbolic-ref HEAD : provides the value of HEAD
+git symbolic-ref HEAD refs/heads/test<ref_sample> :  Sets HEAD to provided ref
+
+Tag:
+-it contains a tagger, a date, a message, and a pointer. A tag object generally points to a commit rather than a tree. It’s like a branch reference, but it never moves?—?it always points to the same commit but gives it a friendlier name.
+lightweight tag is?—?a reference that never moves
+git update-ref refs/tags/v1.0 cac0cab538b970a37ea1e769cbbde608743bc96d<commit_has> :  Creates a lightweight tag at the commit_hash
+
+An annotated tag is more complex, however. If you create an annotated tag, Git creates a tag object and then writes a reference to point to it rather than directly to the commit
+git tag -a v1.1 1a410efbd13591db07496601ebc7a059dd55cfe9 -m 'Test tag' :  An annotated tag named Test tag is created at the commit hash.
+
+Remotes : 
+ If you add a remote and push to it, Git stores the value you last pushed to that remote for each branch in the refs/remotes directory
+ git remote add origin<name_of_remote> git@github.com:schacon/simplegit-progit.git<remote_repo> : adds the remote repo as a remote object
+ git push origin<remote_repo> master<local_branch> :  Pushes the contents of local branch to the remote repo
+ Remote references differ from branches (refs/heads references) mainly in that they’re considered read-only. You can git checkout to one, but Git won’t point HEAD at one, so you’ll never update it with a commit command. Git manages them as bookmarks to the last known state of where those branches were on those servers.
+
+
+
+
+
+CONFIG: 
+
+/etc/gitconfig file: Contains values applied to every user on the system and all their repositories. If you pass the option --system to git config, it reads and writes from this file specifically. (Because this is a system configuration file, you would need administrative or superuser privilege to make changes to it.)
+
+~/.gitconfig or ~/.config/git/config file: Values specific personally to you, the user. You can make Git read and write to this file specifically by passing the --global option, and this affects all of the repositories you work with on your system.
+
+config file in the Git directory (that is, .git/config) of whatever repository you’re currently using: Specific to that single repository. You can force Git to read from and write to this file with the --local option, but that is in fact the default. (Unsurprisingly, you need to be located somewhere in a Git repository for this option to work properly.)
+
+git config --list: look at your ~/.gitconfig file
+git config --global user.email "<email>" : Change email assigned to commits from local computer
+git config --global user.name "<name>" :  Change username assigned to commits from local computer
+
+
+SETTING UP:
+
+git init: Convert a directory into local repository. This creates a new subdirectory named .git that contains all of your necessary repository files,a Git repository skeleton. 
+git clone <url>  : Cloning an Existing Repository, uses the SSH transfer protocol
+git clone -o booyah : a new ref named booyah gets created. Ex: booyah/master
+git status -s or git status --short :  New files that aren’t tracked have a ?? next to them, new files that have been added to the staging area have an A, modified files have an M and so on
+cat .gitignore : class of files that you don’t want Git to automatically add or even show you as being untracked
+git diff : shows you the exact lines added and removed?—?the patch, as it were.compares what is in your working directory with what is in your staging area
+git diff --staged : see what you’ve staged that will go into your next commit. If you’ve staged all of your changes, git diff will give you no output.
+
+
+Working with remotes : 
+
+git remote : To see which remote servers you have configured(by default named origin if cloned)
+git remote -v : shows you the URLs that Git has stored for the shortname to be used when reading and writing to that remote
+git remote add remote_shortname(origin) remote_url<SSH_remote repo> :  Connects the local repo to the remote repo via the SSH and shows you using the short_name
+git fetch <remote_shortname> : fetch all the information that remote branch has but that you don’t yet have in your repository
+git pull : fetches data from the server you originally cloned from and automatically tries to merge it into the code you’re currently working on
+git push <remote_shortname> <branch> : push your master branch to your origin server (again, cloning generally sets up both of those names for you automatically)
+git remote show <remote_shortname> :  see more information about a particular remote
+git remote rename <remote_shortname_old> <remote_shortname_new> : to change a remote’s shortname
+git remote remove <remote_shortname> or git remote rm <remote_shortname> :  remove a remote, once you delete the reference to a remote this way, all remote-tracking branches and configuration settings associated with that remote are also deleted.
+git fetch <remote> : Fetches the data from remote server but doesnot merge. looks up which server “origin” is (in this case, it’s git.ourcompany.com), fetches any data from it that you don’t yet have, and updates your local database, moving your origin/master pointer to its new, more up-to-date position
+git push <remote> <branch> : want to share a branch with the world, you need to push it up to a remote to which you have write access
+
+Branching:
+When you make a commit, Git stores a commit object that contains a pointer to the snapshot of the content you staged. This object also contains the author’s name and email address, the message that you typed, and pointers to the commit or commits that directly came before this commit (its parent or parents): zero parents for the initial commit, one parent for a normal commit, and multiple parents for a commit that results from a merge of two or more branches.
+A branch in Git is actually a simple file that contains the 40 character SHA-1 checksum of the commit it points to, branches are cheap to create and destroy. Creating a new branch is as quick and simple as writing 41 bytes to a file (40 characters and a newline).
+
+So each branch points to a commit. a special pointer called HEAD, in Git, this is a pointer to the local branch you’re currently on
+In other words, by default, git log will only show commit history below the branch you’ve checked out.
+
+git branch :  Shows all the available branches
+git branch <branch_name> : Creates a branch with that name
+git checkout <branch_name> : Moves to that branch
+git checkout -b <branch_name> : Creates and moves to that branch
+git checkout -b <branch_name> <branch_to_fork> :  Creates a new branch from branch_to_fork
+git add <file_name> : Adds a particular file to the staging area
+git add . : adds all the unstaged files to the staging area
+git commit -m "Message" : Commits the files present in th staging area into local repository
+git commit --amend : Ammends the last commit on that branch
+git commit -a -m 'Add new benchmarks' : Skips the staging area
+git merge <branch_name> : Merges the <branch_name> changes with the current branch
+git mergetool : graphical tool to resolve merge conflicts
+git branch -d <branch_name> :  Deletes a particular branch [ error, if there are unmerged changes, for forceful delete use -D option]
+git rm : remove a file from Git, you have to remove it from your tracked files
+git rm --cached README : you may want to do is to keep the file in your working tree but remove it from your staging area. In other words, you may want to keep the file on your hard drive but not have Git track it anymore.
+git mv file_from file_to : rename a file in Git
+git branch -v : Last commit on each branch
+git branch --merged/git branch --no-merged : filter this list to branches that you have or have not yet merged into the branch you’re currently on
+git ls-remote <remote>, or git remote show <remote> : get a full list of remote references explicitly
+git branch -u origin/serverfix : Branch serverfix set up to track remote branch serverfix from origin.
+git branch -vv : list out your local branches with more information including what each branch is tracking and if your local branch is ahead, behind or both.
+git fetch --all; git branch -vv :   totally up to date ahead and behind numbers, you’ll need to fetch from all your remotes right before running this
+git push origin --delete serverfix : want to delete your serverfix branch from the server
+git rebase --onto <branch_to_mergeinto> <divergent_point> <branch_merge_data> : Take the branch_merge_data branch, figure out the patches since it diverged from the divergent_point branch, and replay these patches in the branch_merge_data branch as if it was based directly off the branch_to_mergeinto branch instead. Follow it up with $ git checkout master
+$ git merge client
+git rebase <basebranch> <topicbranch> :  checks out the topic branch (in this case, server) for you and replays it onto the base branch (master)
+git pull --rebase :  equivalent to  git fetch followed by a git rebase teamone/master
+git stash : Stashes the modified and tracked changes
+git stash list : Shows the stash stack
+git stash apply :  Most recent stashed changed is applied
+git stash apply <stash_number> : Specific stashed change is applied
+git stash apply --index :   command to try to reapply the staged changes
+git stash drop <stash_number> : delete that entry from stash
+git status -s :
+git stash --keep-index  : not only include all staged content in the stash being created, but simultaneously leave it in the index.
+git stash -u : will include untracked files in the stash being created
+git stash --patch :  will not stash everything that is modified but will instead prompt you interactively which of the changes you would like to stash
+git stash branch <new branchname> : creates a new branch for you with your selected branch name, checks out the commit you were on when you stashed your work, reapplies your work there, and then drops the stash if it applies successfully
+git clean : you may not want to stash some work or files in your working directory, but simply get rid of them
+git stash --all : remove everything but save it in a stash
+git clean -f -d : removes any files and also any subdirectories that become empty as a result
+git clean -d -n  : which means “do a dry run and tell me what you would have removed”
+git clean -n -d -x :  do a dry run to remove .gitignore files as well
+git clean -x -i : Interactive way
+git clean -f -fd :  Brute force deletion
+
+GIT LOG:
+
+git log --oneline --decorate :  it shows you where the branch pointers are pointing
+git log --all : show logs/history of all of the branches
+git log testing : To show commit history for the desired branch you have to explicitly specify it.
+git log --oneline --decorate --graph --all : print out the history of your commits, showing where your branch pointers are and how your history has diverged.
+git log --pretty=oneline <reference_name> : Shows the details of the reference
+
+GIT Tag
+
+git tag -l "v1.8.5*" : looking at the 1.8.5 series
+git show : tag data along with the commit that was tagged
+git tag -a v1.4 -m "my version 1.4"  : annotated  tag
+git tag v1.4-lw  : Lightweight tag
+git tag -a v1.2 <commit_hash> " Tags that specific commit
+git push origin <tagname>  : Push tag to remote server pointed by origin
+git push origin --tags  : Push multiple tags at once
+git tag -d <tag_name>  : Deletes a particular tag locally
+git push <remote> :refs/tags/<tagname> : Delete a remote tag
+git push origin --delete <tagname> :  Delete a remote tag
+
+
