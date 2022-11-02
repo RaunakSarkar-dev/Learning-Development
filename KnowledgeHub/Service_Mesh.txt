@@ -1,0 +1,42 @@
+SERVICE MESH
+1. Manages all service-to-service communication
+2. Provides additional services
+3. Platform agnostic
+
+USES
+1. Handle timeouts, security, Retries, Monitoring
+2. Collection of software components(Data Plane) that sit near the service and manage all the service-service communication
+3. Produces all the required components
+	1. Protocol conversion
+	2. Communcation security 3. Authentication 4. Reliability
+	5. Monitoring 6. Service Discovery 7. Testing 8. Load Balancing
+	
+	
+CIRCUIT BREAKER
+Circuit breaker monitors the service checks the number of timeout, over a thresold count, cut the service and returns a timeout error
+
+Two types:
+1. In Process --> Mesh as a part of the app [DDS Foundation]
+2. Sidecar --> Mesh out-of-process. So Service to Mesh IPC needed [Istio(container of Kubernetes), LinkRerd, Maesh]
+
+
+LOGGING : Winston(nodeJS), serilog(.NETCore)
+
+Correlation ID :  A flow identifier, Correlates events between services, Enables stitching separate events to single flow
+
+Transport to Logging service: Queue, Balances Load [ Rabbit MQ, Kafka]
+
+Logging Service: Preferably based on indexing/digesting/search products[ELKStack, Splunk]
+
+Monitoring : Looks at metrics and detects anomolies, give alerts [Nagios, ELKStack (On-Premise), New Relics , Application Insights(Cloud)]
+
+Types: 
+Infrastructure : Monitor the server(CPU,RAM etc)
+Application : Monitors the application 
+
+Not to Use:
+1. Small system {if services are less than 2-3 services]
+2. Intermingled Functionality and Data: If almost all req for data span more than one service, there is a problem
+3. Performance Sensitive Systems : Performance overhead due to network hops
+4. Quick and Dirty Systems : Like a POC
+5. No planned updates: Like a Embedded system
